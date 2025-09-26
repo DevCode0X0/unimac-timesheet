@@ -78,18 +78,24 @@ export default function DashboardPage() {
       {/* Judul */}
       <h1 className="text-2xl font-bold mb-4">Unimac Timesheet</h1>
 
-      {/* Header saldo */}
+      {/* Ringkasan Hari Ini */}
       <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 rounded-2xl text-white shadow-lg">
-        <div className="p-2 flex justify-between items-center">
+        <div className="flex justify-between items-center mb-2">
           <div>
-            <p className="text-sm">Total Saldo</p>
-            <h2 className="text-3xl font-bold">Rp 39.287</h2>
+            <p className="text-sm">Target Jam Kerja Hari Ini</p>
+            <h2 className="text-3xl font-bold">8 Jam</h2>
           </div>
           <div className="bg-purple-100 px-4 py-2 rounded-xl text-sm font-semibold text-purple-600">
-            810 Points
+           <p>1/8 Toko</p>
+           <p>2:30/8 Jam</p>
           </div>
         </div>
+
+        <div className="flex justify-between text-sm text-purple-100">
+          <p>Check-in Terakhir: <span className="font-semibold">08:15</span></p>
+        </div>
       </div>
+
 
       {/* Menu Grid */}
       <div className="p-2">
