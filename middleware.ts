@@ -1,21 +1,28 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import * as jwt from "jsonwebtoken";
+import { jwtVerify } from "jose";
 
-export function middleware(req: NextRequest) {
-  const token = req.cookies.get("token")?.value || req.headers.get("authorization")?.replace("Bearer ", "");
+export async function middleware(req: NextRequest) {
+  const token = req.cookies.get("token")?.value;
 
+  // Jika tidak ada token, langsung redirect ke login
   if (!token) {
-    if (req.nextUrl.pathname.startsWith("/dashboard")) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
-    return NextResponse.next();
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET!);
+    // Secret key harus di-encode menjadi Uint8Array
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+
+    // Verifikasi token menggunakan jose
+    await jwtVerify(token, secret);
+
+    // Jika verifikasi berhasil, lanjutkan ke halaman yang diminta
     return NextResponse.next();
-  } catch {
+  } catch (err) {
+    // Jika verifikasi gagal (token tidak valid atau expired),
+    // redirect kembali ke halaman login
+    console.error("Verifikasi JWT Gagal:", err);
     return NextResponse.redirect(new URL("/login", req.url));
   }
 }

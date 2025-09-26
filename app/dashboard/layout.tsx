@@ -1,12 +1,19 @@
+"use client";
+
+import BottomNav from "../components/BottomNav";
+
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex">
-      <aside className="w-64 bg-gray-900 text-white">Sidebar di sini</aside>
-      <main className="flex-1 p-6">{children}</main>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Konten utama */}
+      <main className="flex-1 p-4">{children}</main>
+
+      {/* Navigasi bawah */}
+      <BottomNav />
     </div>
   );
 }
