@@ -1,4 +1,4 @@
-// File: /home/bonbox.id/public_html/time/app/login/layout.tsx
+// File: D:\time\app\login\layout.tsx
 import * as entry from '../../../../app/login/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
