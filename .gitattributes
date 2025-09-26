@@ -1,0 +1,14 @@
+# Gunakan LF secara konsisten untuk semua source code
+* text=auto eol=lf
+
+# Windows-only files bisa tetap CRLF kalau perlu
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+
+# Binary files (jangan diubah line ending-nya)
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary

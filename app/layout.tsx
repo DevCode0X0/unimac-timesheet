@@ -1,19 +1,20 @@
 // app/layout.tsx
-import "./globals.css";
+import './globals.css'
+import type { Metadata } from 'next'
 
-export const metadata = {
-  title: "Time App",
-  description: "Aplikasi Absensi Pengawas",
-};
+export const metadata: Metadata = {
+  title: 'Unimac Timesheet',
+  description: 'Timesheet project',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body>{children}</body>
     </html>
-  );
+  )
 }
