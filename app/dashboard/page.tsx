@@ -1,3 +1,4 @@
+// /app/dashboard/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -5,14 +6,20 @@ import Image from "next/image";
 import BottomNav from "../components/BottomNav";
 
 interface Reminder {
-  id: string; // Supabase pakai UUID
-  title: string;
+  id: string;       // Supabase pakai UUID
+  title: string;    // nama file (opsional, bisa dihapus kalau nggak dipakai lagi)
   image_url: string;
+  note: string;     // 🆕 catatan reminder
+  created_at?: string; // optional, kalau mau pakai untuk urutan
 }
+
 
 export default function DashboardPage() {
   const [reminders, setReminders] = useState<Reminder[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [startX, setStartX] = useState<number | null>(null);
+  const [translateX, setTranslateX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Fetch reminders dari API Backend
   useEffect(() => {
@@ -31,15 +38,40 @@ export default function DashboardPage() {
     fetchReminders();
   }, []);
 
-  // Slideshow otomatis
+  // Auto slideshow
   useEffect(() => {
-    if (reminders.length > 0) {
+    if (reminders.length > 0 && !isDragging) {
       const interval = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % reminders.length);
-      }, 3000);
+      }, 4000);
       return () => clearInterval(interval);
     }
-  }, [reminders]);
+  }, [reminders, isDragging]);
+
+  // Gesture handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (startX === null) return;
+    const deltaX = e.touches[0].clientX - startX;
+    setTranslateX(deltaX);
+  };
+
+  const handleTouchEnd = () => {
+    if (translateX > 50) {
+      // swipe kanan
+      setCurrentIndex((prev) => (prev - 1 + reminders.length) % reminders.length);
+    } else if (translateX < -50) {
+      // swipe kiri
+      setCurrentIndex((prev) => (prev + 1) % reminders.length);
+    }
+    setTranslateX(0);
+    setStartX(null);
+    setIsDragging(false);
+  };
 
   return (
     <div className="pb-20 bg-gray-50 min-h-screen text-purple-600">
@@ -84,17 +116,33 @@ export default function DashboardPage() {
 
       {/* Reminder Slideshow */}
       <div className="p-4">
-        <div className="rounded-xl overflow-hidden shadow-md h-48 flex items-center justify-center bg-gray-100 relative">
-          {reminders.length > 0 ? (
-            <Image
-              src={reminders[currentIndex].image_url}
-              alt={reminders[currentIndex].title}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <p className="text-gray-500">Belum ada reminder</p>
-          )}
+        <div
+          className="relative overflow-hidden rounded-xl shadow-md h-48 bg-gray-100"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div
+            className="flex h-full transition-transform duration-500 ease-out"
+            style={{
+              transform: `translateX(calc(${-currentIndex * 100}% + ${translateX}px))`,
+            }}
+          >
+            {reminders.map((item) => (
+              <div key={item.id} className="w-full flex-shrink-0 relative">
+                <Image
+                  src={item.image_url}
+                  alt={item.title}
+                  fill
+                  className="object-cover"
+                />                
+                <div className="absolute bottom-0 w-full bg-black bg-opacity-40 text-white p-2 text-sm">
+                {reminders[currentIndex].note || "Tanpa catatan"}
+                </div>
+
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Dot indikator */}
